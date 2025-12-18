@@ -1,25 +1,27 @@
 from fastmcp import FastMCP
+from query import query as execute_query
 
 mcp = FastMCP(
-    "Math Tools",
-    description="Provides mathematical operations like addition, subtraction, etc."
+    "TypeDB MCP Server",
+    # description="Provides query capability against a TypeDB server"
 )
 
 @mcp.tool
-def add(a: float, b: float) -> float:
-    """Add two numbers together and return the result.
+def query(query: str, database: str, transaction_type: str) -> str:
+    """Executes given TypeQL query against the given database.
     
     Args:
-        a: First number (e.g., 5.0, -3.14)
-        b: Second number (e.g., 10, 2.5)
+        query: TypeQL query to be executed
+        database: The name of the database against which the query will be executed
+        transaction_type: Transaction type - "read", "write", or "schema" (default: "read")
     
     Returns:
-        The arithmetic sum of a and b
+        Query results as JSON string
     
     Example:
-        add(5, 3) returns 8
+        query("match $p isa person; fetch { $p.* };", "social_network")
     """
-    return a + b
+    return execute_query(query, database, transaction_type)
 
 if __name__ == "__main__":
-    mcp.run(transport="http", host="0.0.0.0", port=8000)
+    mcp.run(transport="http", host="0.0.0.0", port=8001)
