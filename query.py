@@ -1,18 +1,6 @@
 import requests
-
-TYPEDB_URL = "http://localhost:8000"
-TYPEDB_USERNAME = "admin"
-TYPEDB_PASSWORD = "password"
-
-
-def get_auth_token() -> str:
-    """Sign in to TypeDB and get an access token."""
-    response = requests.post(
-        f"{TYPEDB_URL}/v1/signin",
-        json={"username": TYPEDB_USERNAME, "password": TYPEDB_PASSWORD}
-    )
-    response.raise_for_status()
-    return response.json()["token"]
+import config
+from common import get_auth_token
 
 
 def query(query: str, database: str, transaction_type: str = "read") -> str:
@@ -32,7 +20,7 @@ def query(query: str, database: str, transaction_type: str = "read") -> str:
     token = get_auth_token()
     
     response = requests.post(
-        f"{TYPEDB_URL}/v1/query",
+        f"{config.TYPEDB_URL}/v1/query",
         headers={"Authorization": f"Bearer {token}"},
         json={
             "databaseName": database,
