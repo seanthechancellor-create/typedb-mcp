@@ -55,7 +55,7 @@ Use `podman` or `Docker` to create a Docker image and push it to DockerHub:
 ```bash
 podman login docker.io
 
-VERSION=$(cat VERSION)
+VERSION=<desired version number>
 podman build -t typedb/typedb-mcp-server:$VERSION .
 podman push typedb/typedb-mcp-server:$VERSION
 ```
