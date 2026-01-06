@@ -3,8 +3,9 @@ version: '3.8'
 services:
   typedb:
     image: typedb/typedb:3.7.2
-    container_name: typedb-server
+    container_name: typedb
     ports:
+      - "1729:1729"
       - "8000:8000"
     networks:
       - typedb-network
@@ -15,7 +16,7 @@ services:
       retries: 5
 
   typedb-mcp:
-    image: typedb/typedb-mcp:1.0.0-alpha2
+    image: typedb/typedb-mcp:1.0.0
     container_name: typedb-mcp
     ports:
       - "8001:8001"
