@@ -122,26 +122,31 @@ def user_delete(username: str) -> str:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="TypeDB MCP Server")
     parser.add_argument("--port", type=int, default=8001, help="Port for the MCP server (default: 8001)")
+    parser.add_argument("--transport", type=str, default="http", choices=["http", "stdio"], help="Transport mode: http (default) or stdio (for Claude Desktop)")
     parser.add_argument("--typedb-address", type=str, required=True, help="Address for TypeDB's HTTP port (e.g., http://localhost:8000)")
     parser.add_argument("--typedb-username", type=str, default="admin", help="TypeDB username (default: admin)")
     parser.add_argument("--typedb-password", type=str, default="password", help="TypeDB password (default: password)")
-    
+
     args = parser.parse_args()
-    
+
     config.TYPEDB_URL = args.typedb_address
     config.TYPEDB_USERNAME = args.typedb_username
     config.TYPEDB_PASSWORD = args.typedb_password
-    
+
     # Signal handler for graceful shutdown
     def handle_shutdown(signum, frame):
         logger.info("Received shutdown signal, initiating graceful shutdown...")
-    
+
     # Register signal handlers
     signal.signal(signal.SIGINT, handle_shutdown)
     signal.signal(signal.SIGTERM, handle_shutdown)
-    
-    # Run server with increased graceful shutdown timeout
-    logger.info(f"Starting TypeDB MCP Server on port {args.port}")
-    logger.info(f"Connecting to TypeDB at {args.typedb_address}")
-    mcp.run(transport="http", host="0.0.0.0", port=args.port)
+
+    if args.transport == "stdio":
+        logger.info(f"Starting TypeDB MCP Server in stdio mode")
+        logger.info(f"Connecting to TypeDB at {args.typedb_address}")
+        mcp.run(transport="stdio")
+    else:
+        logger.info(f"Starting TypeDB MCP Server on port {args.port}")
+        logger.info(f"Connecting to TypeDB at {args.typedb_address}")
+        mcp.run(transport="http", host="0.0.0.0", port=args.port)
 
