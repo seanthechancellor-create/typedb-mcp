@@ -45,3 +45,19 @@ def database_schema(name: str) -> str:
     )
     handle_typedb_response(response)
     return response.text
+
+
+def database_type_schema(name: str) -> str:
+    """Get the type definitions only.
+
+    For a schema made purely of types this returns exactly what
+    `database_schema` does -- verified against a live server. The two diverge
+    only once a schema also carries non-type elements such as functions.
+    """
+    token = get_auth_token()
+    response = requests.get(
+        f"{config.TYPEDB_URL}/v1/databases/{name}/type-schema",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    handle_typedb_response(response)
+    return response.text
